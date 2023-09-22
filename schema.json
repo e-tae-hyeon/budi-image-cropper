@@ -1,0 +1,39 @@
+{
+  "type": "component",
+  "metadata": {},
+  "schema": {
+    "name": "ImageCropper",
+    "friendlyName": "ImageCropper",
+    "description": "upload image and crop",
+    "icon": "ImageAdd",
+    "settings": [
+      {
+        "type": "field/number",
+        "label": "Field",
+        "key": "field",
+        "required": true
+      },
+      {
+        "type": "text",
+        "key": "endpoint",
+        "label": "Endpoint",
+        "required": true
+      },
+      {
+        "type": "text",
+        "key": "label",
+        "label": "Label"
+      },
+      {
+        "type": "text",
+        "key": "ratio",
+        "label": "Aspect ratio"
+      },
+      {
+        "type": "validation/number",
+        "label": "Validation",
+        "key": "validation"
+      }
+    ]
+  }
+}
