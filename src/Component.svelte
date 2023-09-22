@@ -80,6 +80,7 @@
     const data = await response.json()
     
     imageUrl = data[0].url
+    formField.fieldState.value = data[0].id
     modal = false
   }
 </script>
