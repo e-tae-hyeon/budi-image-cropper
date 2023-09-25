@@ -1,6 +1,6 @@
 {
   "name": "ImageCropper",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "upload image and crop",
   "license": "MIT",
   "svelte": "index.js",

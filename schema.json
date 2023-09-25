@@ -16,8 +16,7 @@
       {
         "type": "text",
         "key": "url",
-        "label": "Url(Filepath)",
-        "required": true
+        "label": "Url(Filepath)"
       },
       {
         "type": "text",
