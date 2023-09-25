@@ -145,7 +145,7 @@
 
         <a href={url} style="max-width: 400px; overflow: hidden; text-overflow: ellipsis;">{url}</a>
         <div class="image">
-          <img src={url} draggable="false" alt="preview" />
+          <img src={url} draggable="false" alt="preview" crossorigin="anonymous" />
         </div>
       </div>
     {/if}
