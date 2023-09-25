@@ -69,7 +69,7 @@
     files = undefined
     file = undefined
     url = undefined
-    fieldState.value = undefined
+    fieldApi.setValue(undefined)
   }
 
   const onSave = async () => {
@@ -93,7 +93,7 @@
     const data = await response.json()
     
     url = data[0].path
-    fieldState.value = data[0].id
+    fieldApi.setValue(data[0].id)
     modal = false
   }
 </script>
