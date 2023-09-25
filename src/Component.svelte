@@ -17,7 +17,7 @@
   const { styleable } = getContext("sdk")
   const component = getContext("component")
   const formContext = getContext('form')
-  const formStep = getContext('formStep')
+  const formStep = getContext('form-step')
 
   const formApi = formContext?.formApi
   $: formField = formApi?.registerField(field, 'number', undefined, false, validation, formStep)
