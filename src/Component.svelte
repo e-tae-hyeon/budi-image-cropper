@@ -45,7 +45,7 @@
     modal = true
   }
 
-  $: if (img && modal) {
+  $: if (img) {
     img.addEventListener('load', initCropper);
   }
 	
@@ -149,7 +149,9 @@
         <div class="spectrum-Dialog-grid">
           <section class="spectrum-Dialog-content" style="padding-top: 12px;">
             <div>
-              <img bind:this={img} src={url} alt="">
+              {#if modal}
+                <img bind:this={img} src={url} alt="">
+              {/if}
             </div>
           </section>
           <div class="spectrum-ButtonGroup spectrum-Dialog-buttonGroup spectrum-Dialog-buttonGroup--noFooter">
