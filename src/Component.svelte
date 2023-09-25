@@ -50,7 +50,9 @@
   }
 	
 	const initCropper = () => {
-    console.log('init')
+    if (cropper) {
+      cropper.destroy()
+    }
 		cropper = new Cropper(img, {
       viewMode: 1,
 			aspectRatio: eval(ratio),
@@ -73,7 +75,15 @@
   const onSave = async () => {
     const crop = cropper.getCropBoxData()
     const formData = new FormData()
-    formData.append('images', file)
+
+    let blob = file
+
+    if (!blob) {
+      blob = await fetch(url).then(res => res.blob())
+    }
+
+    formData.append('images', blob)
+    
     formData.append('crops', JSON.stringify([{ x: crop.left, y: crop.top, width: crop.width, height: crop.height }]))
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -82,7 +92,7 @@
     
     const data = await response.json()
     
-    url = data[0].url
+    url = data[0].path
     fieldState.value = data[0].id
     modal = false
   }
@@ -135,7 +145,7 @@
 
         <a href={url} style="max-width: 400px; overflow: hidden; text-overflow: ellipsis;">{url}</a>
         <div class="image">
-          <img src={url} draggable="false" />
+          <img src={url} draggable="false" alt="preview" />
         </div>
       </div>
     {/if}
@@ -150,12 +160,12 @@
           <section class="spectrum-Dialog-content" style="padding-top: 12px;">
             <div>
               {#if modal}
-                <img bind:this={img} src={url} alt="">
+                <img bind:this={img} src={url} alt="" crossorigin="anonymous">
               {/if}
             </div>
           </section>
           <div class="spectrum-ButtonGroup spectrum-Dialog-buttonGroup spectrum-Dialog-buttonGroup--noFooter">
-            <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item" on:click={() => { modal = false }} type="button" onclick="closeDialog(this.closest('.spectrum-Modal-wrapper'))">
+            <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item" on:click={() => { modal = false }} type="button">
               <span class="spectrum-Button-label">닫기</span>
             </button>
             <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--fill spectrum-Button--cta spectrum-ButtonGroup-item" type="button" on:click={onSave}>
