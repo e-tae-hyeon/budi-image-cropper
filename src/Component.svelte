@@ -14,6 +14,10 @@
   export let modal = false;
   export let endpoint;
   export let imageUrl;
+
+  export let fieldApi;
+  export let fieldState;
+  export let fieldSchema;
   
   const { styleable } = getContext("sdk")
   const component = getContext("component")
@@ -24,10 +28,14 @@
   $: formField = formApi?.registerField(field, 'number', undefined, false, validation, formStep)
 
   $: unsubscribe = formField?.subscribe((value) => {
+    fieldState = value?.fieldState;
+    fieldApi = value?.fieldApi;
+    fieldSchema = value?.fieldSchema
     console.log(value)
   })
 
   onDestroy(() => {
+    fieldApi?.deregister();
     unsubscribe?.()
   })
   
@@ -80,7 +88,7 @@
     const data = await response.json()
     
     imageUrl = data[0].url
-    formField.fieldState.value = data[0].id
+    fieldState.value = data[0].id
     modal = false
   }
 </script>
