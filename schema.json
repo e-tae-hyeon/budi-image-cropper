@@ -15,6 +15,12 @@
       },
       {
         "type": "text",
+        "key": "url",
+        "label": "Url(Filepath)",
+        "required": true
+      },
+      {
+        "type": "text",
         "key": "endpoint",
         "label": "Endpoint",
         "required": true

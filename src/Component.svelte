@@ -13,13 +13,11 @@
   export let ratio;
   export let modal = false;
   export let endpoint;
-  export let imageUrl;
+  export let url;
 
   export let fieldApi;
   export let fieldState;
   export let fieldSchema;
-
-  export let imageData;
   
   const { styleable } = getContext("sdk")
   const component = getContext("component")
@@ -33,6 +31,7 @@
     fieldState = value?.fieldState;
     fieldApi = value?.fieldApi;
     fieldSchema = value?.fieldSchema
+    console.log(value)
   })
 
   onDestroy(() => {
@@ -47,7 +46,7 @@
 
   $: if (files) {
     file = files[0]
-    imageUrl = URL.createObjectURL(file)
+    url = URL.createObjectURL(file)
     modal = true
   }
 
@@ -72,7 +71,8 @@
   const onRemove = () => {
     files = undefined
     file = undefined
-    imageUrl = undefined
+    url = undefined
+    fieldState.value = undefined
   }
 
   const onSave = async () => {
@@ -86,10 +86,8 @@
     })
     
     const data = await response.json()
-
-    imageData = data[0]
     
-    imageUrl = data[0].url
+    url = data[0].url
     fieldState.value = data[0].id
     modal = false
   }
@@ -101,7 +99,7 @@
 <div use:styleable={$component.styles} class="spectrum-Form-Item">
   <label class="spectrum-FieldLabel spectrum-Form-itemLabel spectrum-FieldLabel--left spectrum-FieldLabel--sizeM">{label}</label>
   <div class="spectrum-Form-itemField">
-    {#if !imageData}
+    {#if !url}
       <div class="spectrum-Dropzone">
         <div class="spectrum-IllustratedMessage spectrumIllustratedMessage--cta">
           <input type="file" hidden accept="image/*" bind:this={input} bind:files />
@@ -124,32 +122,34 @@
       </div>
     {:else}
       <div class="gallery">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="display: flex; gap: 8px">
+        <div style="display: flex; justify-content: flex-end; align-items: center;">
+          <div style="display: flex; gap: 8px;">
             <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--cta" contenteditable="false" draggable="false" on:click={() => { modal = true }}>편집</button>
-            <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--cta " contenteditable="false" draggable="false" on:click={onRemove}>삭제</button>
+            <button class="spectrum-Button spectrum-Button--outline spectrum-Button--negative spectrum-Button--sizeM spectrum-Button--iconOnly" aria-label="Delete" on:click={onRemove}>
+              <svg class="spectrum-Icon spectrum-Icon--sizeM" focusable="false" aria-hidden="true">
+                <use xlink:href="#spectrum-icon-18-Delete" />
+              </svg>
+            </button>          
           </div>
         </div>
 
-        {#if imageUrl}
-          <a href={imageData.url}>{imageData.url}</a>
-          <div class="image">
-            <img src={imageUrl} draggable="false" />
-          </div>
-        {/if}
+        <a href={url} style="max-width: 400px; overflow: hidden; text-overflow: ellipsis;">{url}</a>
+        <div class="image">
+          <img src={url} draggable="false" />
+        </div>
       </div>
     {/if}
   </div>
 </div>
 
-{#if imageUrl}
+{#if url}
   <div class={`spectrum-Modal-wrapper ${modal ? 'is-open' : ''}`} style="background-color: rgba(0,0,0,0.5); z-index: 10000000; padding: 60px; padding-left: 310px">
     <div class={`spectrum-Modal ${modal ? 'is-open' : ''}`} data-testid="modal">
       <section class="spectrum-Dialog spectrum-Dialog--fullscreen" role="alertdialog" tabindex="-1" aria-modal="true">
         <div class="spectrum-Dialog-grid">
           <section class="spectrum-Dialog-content" style="padding-top: 12px;">
             <div>
-              <img bind:this={img} src={imageUrl} alt="">
+              <img bind:this={img} src={url} alt="">
             </div>
           </section>
           <div class="spectrum-ButtonGroup spectrum-Dialog-buttonGroup spectrum-Dialog-buttonGroup--noFooter">
@@ -187,12 +187,14 @@
   }
 
   .image {
+    width: 400px;
     max-height: 400px;
     display: flex;
   }
 
   .image img {
     object-fit: contain;
+    width: 100%;
   }
 </style>
 
