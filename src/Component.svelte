@@ -18,6 +18,8 @@
   export let fieldApi;
   export let fieldState;
   export let fieldSchema;
+
+  export let imageData;
   
   const { styleable } = getContext("sdk")
   const component = getContext("component")
@@ -31,7 +33,6 @@
     fieldState = value?.fieldState;
     fieldApi = value?.fieldApi;
     fieldSchema = value?.fieldSchema
-    console.log(value)
   })
 
   onDestroy(() => {
@@ -76,7 +77,6 @@
 
   const onSave = async () => {
     const crop = cropper.getCropBoxData()
-    console.log(crop)
     const formData = new FormData()
     formData.append('images', file)
     formData.append('crops', JSON.stringify([{ x: crop.left, y: crop.top, width: crop.width, height: crop.height }]))
@@ -86,6 +86,8 @@
     })
     
     const data = await response.json()
+
+    imageData = data[0]
     
     imageUrl = data[0].url
     fieldState.value = data[0].id
@@ -99,7 +101,7 @@
 <div use:styleable={$component.styles} class="spectrum-Form-Item">
   <label class="spectrum-FieldLabel spectrum-Form-itemLabel spectrum-FieldLabel--left spectrum-FieldLabel--sizeM">{label}</label>
   <div class="spectrum-Form-itemField">
-    {#if !file}
+    {#if !imageData}
       <div class="spectrum-Dropzone">
         <div class="spectrum-IllustratedMessage spectrumIllustratedMessage--cta">
           <input type="file" hidden accept="image/*" bind:this={input} bind:files />
@@ -123,8 +125,6 @@
     {:else}
       <div class="gallery">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <p>sdsfsdfsd.jpg</p>
-
           <div style="display: flex; gap: 8px">
             <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--cta" contenteditable="false" draggable="false" on:click={() => { modal = true }}>편집</button>
             <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--cta " contenteditable="false" draggable="false" on:click={onRemove}>삭제</button>
@@ -132,6 +132,7 @@
         </div>
 
         {#if imageUrl}
+          <a href={imageData.url}>{imageData.url}</a>
           <div class="image">
             <img src={imageUrl} draggable="false" />
           </div>
