@@ -69,7 +69,7 @@
     files = undefined
     file = undefined
     url = undefined
-    fieldApi.setValue(undefined)
+    fieldApi.setValue(null)
   }
 
   const onSave = async () => {
