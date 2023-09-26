@@ -144,6 +144,7 @@
         </div>
 
         <a href={url} style="max-width: 400px; overflow: hidden; text-overflow: ellipsis;">{url}</a>
+
         <div class="image">
           <img src={url} draggable="false" alt="preview" crossorigin="anonymous" />
         </div>
@@ -202,6 +203,7 @@
     width: 400px;
     max-height: 400px;
     display: flex;
+    align-self: center;
   }
 
   .image img {
