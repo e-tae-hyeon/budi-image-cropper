@@ -28,11 +28,6 @@
     fieldSchema = value?.fieldSchema
     console.log(value)
   })
-
-  onDestroy(() => {
-    fieldApi?.deregister();
-    unsubscribe?.()
-  })
   
   let img
   let input;
@@ -47,6 +42,25 @@
 
   $: if (img) {
     img.addEventListener('load', initCropper);
+  }
+
+  const nav = document.querySelector('.nav-wrapper')
+
+  $: if (modal) {
+    nav.style.zIndex = 0
+  } else {
+    nav.style.zIndex = ''
+  }
+
+  const onResizeWindow = () => {
+    const nav = document.querySelector('.nav-wrapper')
+    setTimeout(() => {
+      if (modal) {
+        nav.style.zIndex = 0
+      } else {
+        nav.style.zIndex = ''
+      }
+    }, 0)
   }
 	
 	const initCropper = () => {
@@ -73,7 +87,7 @@
   }
 
   const onSave = async () => {
-    const crop = cropper.getCropBoxData()
+    const crop = cropper.getData()
     const formData = new FormData()
 
     let blob = file
@@ -84,7 +98,7 @@
 
     formData.append('images', blob)
     
-    formData.append('crops', JSON.stringify([{ x: crop.left, y: crop.top, width: crop.width, height: crop.height }]))
+    formData.append('crops', JSON.stringify([{ x: crop.x, y: crop.y, width: crop.width, height: crop.height }]))
     const response = await fetch(endpoint, {
       method: 'POST',
       body: formData
@@ -96,6 +110,11 @@
     fieldApi.setValue(data[0].id)
     modal = false
   }
+
+  onDestroy(() => {
+    fieldApi?.deregister();
+    unsubscribe?.()
+  })
 </script>
 
 <svelte:head>
@@ -103,13 +122,17 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.js"></script>
 </svelte:head>
 
+<svelte:window
+  on:resize={onResizeWindow}
+/>
+
 {#if !formContext}
 <div class="placeholder">Form components need to be wrapped in a form</div>
 {:else}
 <div use:styleable={$component.styles} class="spectrum-Form-Item">
   <label class="spectrum-FieldLabel spectrum-Form-itemLabel spectrum-FieldLabel--left spectrum-FieldLabel--sizeM">{label}</label>
   <div class="spectrum-Form-itemField">
-    {#if !url}
+    {#if !url || !fieldState.value}
       <div class="spectrum-Dropzone">
         <div class="spectrum-IllustratedMessage spectrumIllustratedMessage--cta">
           <input type="file" hidden accept="image/*" bind:this={input} bind:files />
@@ -153,31 +176,31 @@
   </div>
 </div>
 
-{#if url}
-  <div class={`spectrum-Modal-wrapper ${modal ? 'is-open' : ''}`} style="background-color: rgba(0,0,0,0.5); z-index: 10000000; padding: 60px; padding-left: 310px">
-    <div class={`spectrum-Modal ${modal ? 'is-open' : ''}`} data-testid="modal">
-      <section class="spectrum-Dialog spectrum-Dialog--fullscreen" role="alertdialog" tabindex="-1" aria-modal="true">
-        <div class="spectrum-Dialog-grid">
-          <section class="spectrum-Dialog-content" style="padding-top: 12px;">
-            <div>
-              {#if modal}
-                <img bind:this={img} src={url} alt="" crossorigin="anonymous">
-              {/if}
+  {#if url}
+    <div class={`spectrum-Modal-wrapper ${modal ? 'is-open' : ''}`} style="background-color: rgba(0,0,0,0.5); z-index: 10000000; padding: 60px;">
+      <div class={`spectrum-Modal ${modal ? 'is-open' : ''}`} data-testid="modal" style="">
+        <section class="spectrum-Dialog spectrum-Dialog--fullscreen" role="alertdialog" tabindex="-1" aria-modal="true">
+          <div class="spectrum-Dialog-grid">
+            <section class="spectrum-Dialog-content" style="padding-top: 12px;">
+              <div>
+                {#if modal}
+                  <img bind:this={img} src={url} alt="" crossorigin="anonymous">
+                {/if}
+              </div>
+            </section>
+            <div class="spectrum-ButtonGroup spectrum-Dialog-buttonGroup spectrum-Dialog-buttonGroup--noFooter">
+              <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item" on:click={() => { modal = false }} type="button">
+                <span class="spectrum-Button-label">닫기</span>
+              </button>
+              <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--fill spectrum-Button--cta spectrum-ButtonGroup-item" type="button" on:click={onSave}>
+                <span class="spectrum-Button-label">저장</span>
+              </button>
             </div>
-          </section>
-          <div class="spectrum-ButtonGroup spectrum-Dialog-buttonGroup spectrum-Dialog-buttonGroup--noFooter">
-            <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--outline spectrum-Button--secondary spectrum-ButtonGroup-item" on:click={() => { modal = false }} type="button">
-              <span class="spectrum-Button-label">닫기</span>
-            </button>
-            <button class="spectrum-Button spectrum-Button--sizeM spectrum-Button--fill spectrum-Button--cta spectrum-ButtonGroup-item" type="button" on:click={onSave}>
-              <span class="spectrum-Button-label">저장</span>
-            </button>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
-  </div>
-{/if}
+  {/if}
 {/if}
 
 
@@ -200,8 +223,9 @@
   }
 
   .image {
-    width: 400px;
+    max-width: 400px;
     max-height: 400px;
+    width: 100%;
     display: flex;
     align-self: center;
   }
