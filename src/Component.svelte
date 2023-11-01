@@ -28,6 +28,8 @@
     fieldSchema = value?.fieldSchema
     console.log(value)
   })
+
+  $: loading = false
   
   let img
   let input;
@@ -99,16 +101,23 @@
     formData.append('images', blob)
     
     formData.append('crops', JSON.stringify([{ x: crop.x, y: crop.y, width: crop.width, height: crop.height }]))
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      body: formData
-    })
-    
-    const data = await response.json()
-    
-    url = data[0].path
-    fieldApi.setValue(data[0].id)
+    loading = true
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: formData
+      })
+      
+      const data = await response.json()
+      url = data[0].path
+      fieldApi.setValue(data[0].id)
+    } catch (e) {
+      alert('이미지 등록 실패')
+    }
+
     modal = false
+    loading = false
   }
 
   onDestroy(() => {
@@ -177,7 +186,12 @@
 </div>
 
   {#if url}
-    <div class={`spectrum-Modal-wrapper ${modal ? 'is-open' : ''}`} style="background-color: rgba(0,0,0,0.5); z-index: 10000000; padding: 60px;">
+    <div class={`spectrum-Modal-wrapper ${modal ? 'is-open' : ''}`} style="background-color: rgba(0,0,0,0.5); z-index: 10000000; padding: 60px; position: relative;">
+      {#if loading}
+        <div style="left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0,5); display: flex; justify-content: center; align-items: center; z-index: 10;">
+          <span style="color: white;">이미지 처리중...</span>
+        </div>
+      {/if}
       <div class={`spectrum-Modal ${modal ? 'is-open' : ''}`} data-testid="modal" style="">
         <section class="spectrum-Dialog spectrum-Dialog--fullscreen" role="alertdialog" tabindex="-1" aria-modal="true">
           <div class="spectrum-Dialog-grid">
