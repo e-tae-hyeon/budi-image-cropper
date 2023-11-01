@@ -186,9 +186,9 @@
 </div>
 
   {#if url}
-    <div class={`spectrum-Modal-wrapper ${modal ? 'is-open' : ''}`} style="background-color: rgba(0,0,0,0.5); z-index: 10000000; padding: 60px; position: relative;">
+    <div class={`spectrum-Modal-wrapper ${modal ? 'is-open' : ''}`} style="background-color: rgba(0,0,0,0.5); z-index: 10000000; padding: 60px">
       {#if loading}
-        <div style="left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0,5); display: flex; justify-content: center; align-items: center; z-index: 10;">
+        <div style="left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 10; position: fixed">
           <span style="color: white;">이미지 처리중...</span>
         </div>
       {/if}
