@@ -34,7 +34,7 @@
   let img
   let input;
   let files;
-  let cropper;
+  // let cropper;
 
   $: if (files) {
     file = files[0]
@@ -43,7 +43,7 @@
   }
 
   $: if (img) {
-    img.addEventListener('load', initCropper);
+    // img.addEventListener('load', initCropper);
   }
 
   const nav = document.querySelector('.nav-wrapper')
@@ -65,17 +65,17 @@
     }, 0)
   }
 	
-	const initCropper = () => {
-    if (cropper) {
-      cropper.destroy()
-    }
-		cropper = new Cropper(img, {
-      viewMode: 1,
-			aspectRatio: eval(ratio),
-      zoomable: false,
-      guides: false,
-		});		
-	}
+	// const initCropper = () => {
+  //   if (cropper) {
+  //     cropper.destroy()
+  //   }
+	// 	cropper = new Cropper(img, {
+  //     viewMode: 1,
+	// 		aspectRatio: eval(ratio),
+  //     zoomable: false,
+  //     guides: false,
+	// 	});		
+	// }
 
   const openFileSelect = () => {
     input.click()
@@ -89,7 +89,7 @@
   }
 
   const onSave = async () => {
-    const crop = cropper.getData()
+    // const crop = cropper.getData()
     const formData = new FormData()
 
     let blob = file
@@ -100,7 +100,7 @@
 
     formData.append('images', blob)
     
-    formData.append('crops', JSON.stringify([{ x: crop.x, y: crop.y, width: crop.width, height: crop.height }]))
+    // formData.append('crops', JSON.stringify([{ x: crop.x, y: crop.y, width: crop.width, height: crop.height }]))
     loading = true
 
     try {
@@ -127,8 +127,8 @@
 </script>
 
 <svelte:head>
-	<link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.css" rel="stylesheet">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.js"></script>
+	<!-- <link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.css" rel="stylesheet"> -->
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.js"></script> -->
 </svelte:head>
 
 <svelte:window
